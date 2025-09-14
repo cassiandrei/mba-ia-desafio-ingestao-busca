@@ -46,7 +46,7 @@ def search_prompt(question=None):
         question (str): A pergunta do usuário a ser respondida
 
     Returns:
-        None: Imprime a resposta diretamente no console
+        str: A resposta gerada pela IA baseada no contexto encontrado
     """
     # Inicializa o modelo de embeddings da OpenAI para converter texto em vetores
     embeddings = OpenAIEmbeddings(
@@ -88,8 +88,12 @@ def search_prompt(question=None):
             "pergunta": question,
         }
     )
+    return result
 
 
 if __name__ == "__main__":
     # Exemplo de uso: busca informações sobre o faturamento da empresa
-    search_prompt("Qual o faturamento da Empresa SuperTechIABrazil?")
+    resposta = search_prompt("Qual o faturamento da Empresa SuperTechIABrazil?")
+    print(resposta)
+ 
+ 
