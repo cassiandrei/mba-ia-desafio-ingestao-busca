@@ -78,12 +78,12 @@ def search_prompt(question=None):
     # Cria pipeline de processamento: Template -> LLM -> Parser de texto
     pipeline = template_question | llm | StrOutputParser()
 
-    # Executa o pipeline com contexto dos 2 documentos mais relevantes e a pergunta
+    # Executa o pipeline com contexto dos 10 documentos mais relevantes e a pergunta
     result = pipeline.invoke(
         {
-            # Junta o conteúdo dos 2 documentos mais relevantes como contexto
+            # Junta o conteúdo dos 10 documentos mais relevantes como contexto
             "contexto": "\n\n".join(
-                [doc.page_content.strip() for doc, _ in results[:2]]
+                [doc.page_content.strip() for doc, _ in results[:10]]
             ),
             "pergunta": question,
         }
@@ -95,5 +95,4 @@ if __name__ == "__main__":
     # Exemplo de uso: busca informações sobre o faturamento da empresa
     resposta = search_prompt("Qual o faturamento da Empresa SuperTechIABrazil?")
     print(resposta)
- 
  
