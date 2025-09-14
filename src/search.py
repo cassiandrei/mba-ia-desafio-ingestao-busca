@@ -1,10 +1,11 @@
 import os
 
 from dotenv import load_dotenv
+from langchain.chat_models import init_chat_model
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from langchain_postgres import PGVector
 
 
@@ -72,8 +73,10 @@ def search_prompt(question=None):
         template=PROMPT_TEMPLATE,
     )
 
-    # Inicializa o modelo de chat da OpenAI com temperatura 0 (respostas determinísticas)
-    llm = ChatOpenAI(model="gpt-5-mini", temperature=0)
+    # Inicializa o modelo de chat com temperatura 0 (respostas determinísticas)
+    llm = init_chat_model(
+        model="gpt-5-mini", model_provider="openai", temperature=0
+    )
 
     # Cria pipeline de processamento: Template -> LLM -> Parser de texto
     pipeline = template_question | llm | StrOutputParser()
@@ -95,4 +98,3 @@ if __name__ == "__main__":
     # Exemplo de uso: busca informações sobre o faturamento da empresa
     resposta = search_prompt("Qual o faturamento da Empresa SuperTechIABrazil?")
     print(resposta)
- 

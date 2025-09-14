@@ -10,7 +10,7 @@ Sistema de busca inteligente com IA que permite fazer perguntas sobre documentos
 
 - Python 3.8+
 - Docker e Docker Compose
-- Chave de API da OpenAI ou Gemini
+- Chave de API da OpenAI
 
 ### 2. Configuração do Ambiente
 
