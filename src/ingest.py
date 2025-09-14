@@ -21,7 +21,7 @@ PDF_PATH = os.getenv("PDF_PATH")
 def ingest_pdf():
 
     # Load PDF
-    current_dir = Path(__file__).parent
+    current_dir = Path(__file__).parent.parent
     pdf_path = current_dir / PDF_PATH
     loader = PyPDFLoader(str(pdf_path))
     docs = loader.load()
