@@ -1,3 +1,13 @@
+import os
+
+from dotenv import load_dotenv
+from langchain.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_postgres import PGVector
+
+
 PROMPT_TEMPLATE = """
 CONTEXTO:
 {contexto}
@@ -25,5 +35,42 @@ PERGUNTA DO USUÁRIO:
 RESPONDA A "PERGUNTA DO USUÁRIO"
 """
 
+load_dotenv()
+
+
 def search_prompt(question=None):
-    pass
+    embeddings = OpenAIEmbeddings(
+        model=os.getenv("OPENAI_MODEL", "text-embedding-3-small")
+    )
+
+    store = PGVector(
+        embeddings=embeddings,
+        collection_name=os.getenv("PG_VECTOR_COLLECTION_NAME"),
+        connection=os.getenv("DATABASE_URL"),
+        use_jsonb=True,
+    )
+
+    results = store.similarity_search_with_score(question, k=10)
+
+    template_question = PromptTemplate(
+        input_variables=["contexto", "pergunta"],
+        template=PROMPT_TEMPLATE,
+    )
+
+    llm = ChatOpenAI(model="gpt-5-mini", temperature=0)
+
+    pipeline = template_question | llm | StrOutputParser()
+
+    result = pipeline.invoke(
+        {
+            "contexto": "\n\n".join(
+                [doc.page_content.strip() for doc, _ in results[:2]]
+            ),
+            "pergunta": question,
+        }
+    )
+    print(result)
+
+
+if __name__ == "__main__":
+    search_prompt("Qual o faturamento da Empresa SuperTechIABrazil?")
